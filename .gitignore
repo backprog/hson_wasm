@@ -1,0 +1,13 @@
+/target
+/cmake-build-debug
+/node_modules
+/dist
+/pkg
+/bin
+/build
+**/*.rs.bk
+.idea
+Cargo.lock
+.DS_Store
+wasm-pack.log
+package-lock.json
