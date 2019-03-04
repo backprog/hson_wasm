@@ -1,11 +1,12 @@
 {
   "name": "hson-wasm",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Hson for javascript",
   "main": "index.js",
   "scripts": {},
-  "devDependencies": {},
   "author": "Backprog",
   "license": "ISC",
+  "keywords": ["hson", "wasm", "rust", "json"],
+  "devDependencies": {},
   "dependencies": {}
 }

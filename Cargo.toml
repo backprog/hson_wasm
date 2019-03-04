@@ -1,6 +1,6 @@
 [package]
 name = "hson_wasm"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Backprog"]
 edition = "2018"
 homepage = "https://github.com/backprog/hson_wasm"
@@ -20,7 +20,7 @@ lazy_static = "1.2.0"
 serde = "1.0.80"
 serde_derive = "1.0.80"
 serde_json = "1.0.39"
-hson = "0.1.8"
+hson = "0.1.9"
 
 [profile.release]
 lto = true
