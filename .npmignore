@@ -1,2 +1,8 @@
 example.html
 example.js
+.idea
+target/
+Cargo.lock
+main.js
+README.md
+.DS_Store
