@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {},
   "author": "Backprog",
+  "homepage": "https://github.com/backprog/hson_wasm",
   "license": "ISC",
   "keywords": ["hson", "wasm", "rust", "json"],
   "devDependencies": {},
