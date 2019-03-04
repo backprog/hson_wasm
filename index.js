@@ -1,4 +1,4 @@
-const { TextDecoder, TextEncoder } = require('util');
+let TextDecoder, TextEncoder;
 
 class Hson {
   constructor () {
@@ -10,6 +10,9 @@ class Hson {
   instantiate () {
     return new Promise((resolve, reject) => {
       if (this.is_node) {
+        TextDecoder = require('util').TextDecoder;
+        TextEncoder = require('util').TextEncoder;
+
         const fs = require('fs');
         const path = require('path');
 
