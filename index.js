@@ -1,4 +1,6 @@
-let TextDecoder, TextEncoder;
+if (typeof module !== 'undefined' && module.exports) {
+  const { TextDecoder, TextEncoder } = require('util');
+}
 
 class Hson {
   constructor () {
@@ -7,43 +9,43 @@ class Hson {
     this.memory = null;
   }
 
-  instantiate () {
+  instantiate (path_to_wasm = null) {
     return new Promise((resolve, reject) => {
-      if (this.is_node) {
-        TextDecoder = require('util').TextDecoder;
-        TextEncoder = require('util').TextEncoder;
+      const env = {
+        memoryBase: 0,
+        tableBase: 0,
+        memory: new WebAssembly.Memory({
+          initial: 256
+        }),
+        table: new WebAssembly.Table({
+          initial: 0,
+          element: 'anyfunc'
+        }),
+        console: (ptr) => {
+          let str = this.copyCStr(ptr);
+          console.log(str);
+        }
+      };
 
+      if (this.is_node) {
         const fs = require('fs');
         const path = require('path');
 
         const src_path = path.resolve(__dirname, 'lib', 'hson.wasm');
         const source = fs.readFileSync(src_path);
         const typedArray = new Uint8Array(source);
-        const env = {
-          memoryBase: 0,
-          tableBase: 0,
-          memory: new WebAssembly.Memory({
-            initial: 256
-          }),
-          table: new WebAssembly.Table({
-            initial: 0,
-            element: 'anyfunc'
-          }),
-          console: (ptr) => {
-            let str = this.copyCStr(ptr);
-            console.log(str);
-          }
-        };
 
-        WebAssembly.instantiate(typedArray, {
-          env: env
-        }).then(result => {
+        WebAssembly.instantiate(typedArray, { env }).then(result => {
           this.instance = result.instance.exports;
           this.instance.debug();
           resolve();
         }).catch(reject);
       } else {
-
+        WebAssembly.instantiateStreaming(fetch(path_to_wasm), { env }).then(result => {
+          this.instance = result.instance.exports;
+          this.instance.debug();
+          resolve();
+        }).catch(reject);
       }
     });
   }
@@ -235,4 +237,6 @@ class Hson {
   }
 }
 
-module.exports = Hson;
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = Hson;
+}
