@@ -4,7 +4,10 @@ Use [hson](https://crates.io/crates/hson) from javascript.
 
 ## Usage
 
-See example.js for a full example.
+See example.js for a full example.  
+The lib directory contains a ready to use wasm file.  
+Run `cargo build --target wasm32-unknown-unknown --release` to rebuild the wasm file, 
+copy the new wasm file from 'target/wasm32-unknown-unknown/release/hson_wasm.wasm' to 'lib' folder and rename it to `hson.wasm`.
 
 ### Instantiation
 
