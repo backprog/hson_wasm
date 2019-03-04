@@ -1,6 +1,5 @@
-if (typeof module !== 'undefined' && module.exports) {
-  const { TextDecoder, TextEncoder } = require('util');
-}
+const TextDecoder = (typeof module !== 'undefined' && module.exports) ? require('util').TextDecoder : window.TextDecoder;
+const TextEncoder = (typeof module !== 'undefined' && module.exports) ? require('util').TextEncoder : window.TextEncoder;
 
 class Hson {
   constructor () {
