@@ -8,6 +8,7 @@
 **/*.rs.bk
 .idea
 Cargo.lock
+main.js
 .DS_Store
 wasm-pack.log
 package-lock.json
