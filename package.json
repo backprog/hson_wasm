@@ -1,6 +1,6 @@
 {
   "name": "hson-wasm",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Hson for javascript",
   "main": "index.js",
   "scripts": {},
