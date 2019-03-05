@@ -3,6 +3,7 @@ example.js
 .idea
 target/
 Cargo.lock
+/cmake-build-debug
 main.js
 README.md
 .DS_Store
