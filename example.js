@@ -58,6 +58,10 @@ hson.instantiate().then(() => {
 
     console.log(hson.query_on(search[0], "div"));
 
+    const q = hson.query("id");
+    console.log(q);
+    console.log(q[0].cast());
+
     if (hson.insert(search[0], 0, new_data)) {
       hson.print();
 

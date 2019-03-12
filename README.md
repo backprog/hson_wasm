@@ -172,3 +172,10 @@ if (hson.replace(search[1], new_data)) {
 ```js
 console.log(hson.is_child(search[0], search[1]));
 ```
+
+#### Cast
+
+```js
+const query = hson.query("id");
+console.log(query[0].cast());
+```

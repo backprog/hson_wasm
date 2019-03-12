@@ -55,6 +55,9 @@
                 console.log(hson.is_child(search[0], search[1]));
                 console.log(hson.search_in(search[0], "div"));
                 console.log(hson.query("div"));
+                const q = hson.query("id");
+                console.log(q);
+                console.log(q[0].cast());
                 console.log(hson.query_on(search[0], "div"));
 
                 if (hson.insert(search[0], 0, new_data)) {

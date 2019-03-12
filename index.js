@@ -107,7 +107,16 @@ class Hson {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.query(this.newString(query_str))));
       if (result.status === 'ERR') console.error(result.reason);
-      return (result.status === 'OK') ? result.data : null;
+      if (result.status === 'OK') {
+        let l = result.data.length;
+
+        while (l--)
+          result.data[l].cast = this.cast.bind(result.data[l]);
+
+        return result.data;
+      } else {
+        return null;
+      }
     } catch (e) {
       console.error(e);
       return null;
@@ -118,7 +127,16 @@ class Hson {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.query_on(node_id, this.newString(query_str))));
       if (result.status === 'ERR') console.error(result.reason);
-      return (result.status === 'OK') ? result.data : null;
+      if (result.status === 'OK') {
+        let l = result.data.length;
+
+        while (l--)
+          result.data[l].cast = this.cast.bind(result.data[l]);
+
+        return result.data;
+      } else {
+        return null;
+      }
     } catch (e) {
       console.error(e);
       return null;
@@ -183,6 +201,19 @@ class Hson {
     }
   }
 
+
+  cast () {
+    switch (this.kind) {
+      case 'Node': return JSON.parse(`{${this.value}}`);
+      case 'Array': return JSON.parse(`[${this.value}]`);
+      case 'Integer': return parseInt(this.value);
+      case 'Float': return parseFloat(this.value);
+      case 'String': return this.value;
+      case 'Bool': return (this.value === 'true');
+      case 'Undefined': return null;
+      default: return this.value;
+    }
+  }
 
   copyCStr (ptr) {
     let orig_ptr = ptr;
