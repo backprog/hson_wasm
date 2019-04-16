@@ -1,10 +1,15 @@
-const TextDecoder = (typeof module !== 'undefined' && module.exports) ? require('util').TextDecoder : window.TextDecoder;
-const TextEncoder = (typeof module !== 'undefined' && module.exports) ? require('util').TextEncoder : window.TextEncoder;
+
+const TextDecoder = is_node() ? require('util').TextDecoder : window.TextDecoder;
+const TextEncoder = is_node() ? require('util').TextEncoder : window.TextEncoder;
+
+function is_node () {
+  const fs = require('fs');
+  return (typeof fs !== 'undefined' && typeof fs.readFileSync !== 'undefined');
+}
 
 class Hson {
   constructor () {
-    const fs = require('fs');
-    this.is_node = (typeof fs !== 'undefined' && typeof fs.readFileSync !== 'undefined');
+    this.is_node = is_node();
     this.instance = null;
     this.memory = null;
   }
