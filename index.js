@@ -3,7 +3,7 @@ const TextEncoder = (typeof module !== 'undefined' && module.exports) ? require(
 
 class Hson {
   constructor () {
-    this.is_node = (typeof module !== 'undefined' && module.exports);
+    this.is_node = (typeof window === 'undefined');
     this.instance = null;
     this.memory = null;
   }
