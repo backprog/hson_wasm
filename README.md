@@ -13,16 +13,13 @@ copy the new wasm file from 'target/wasm32-unknown-unknown/release/hson_wasm.was
 
 ```js
 const Hson = require('hson-wasm');
-const hson = new Hson();
 
-hson.instantiate().then(() => {
-  /* ... */
-});
+await Hson.instantiate();
 
 // Client-side
-hson.instantiate(path_to_wasm).then(() => {
-  /* ... */
-});
+await Hson.instantiate(path_to_wasm);
+
+const hson = Hson.new();
 ```
 
 ### Parsing
@@ -59,11 +56,8 @@ const data = `{
     }
   }`;
 
-hson.instantiate().then(() => {
-  if (hson.parse(data)) {
-    /* ... */
-  }
-});
+hson.parse(data);
+/* ... */
 ```
 
 ### Stringify
@@ -76,7 +70,6 @@ console.log(s);
 
 See https://crates.io/crates/hson#Searching for all options.  
 Searching will return an array of nodes identifier (int), see [Querying](#Querying) to get nodes vertexes.  
-Return `null` in case of error.
 
 ```js
 const search = hson.search("div");
@@ -144,25 +137,22 @@ const new_data = `{
   }`;
 
 // node_id, position, data
-if (hson.insert(search[0], 0, new_data)) {
+hson.insert(search[0], 0, new_data);
   /* ... */
-}
 ```
 
 ### Remove
 
 ```js
-if (hson.remove(search[2])) {
+hson.remove(search[2]);
   /* ... */
-}
 ```
 
 ### Replace 
 
 ```js
-if (hson.replace(search[1], new_data)) {
+hson.replace(search[1], new_data);
   /* ... */
-}
 ```
 
 ### Utils

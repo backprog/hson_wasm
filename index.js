@@ -7,73 +7,32 @@ function is_node () {
   return (typeof fs !== 'undefined' && typeof fs.readFileSync !== 'undefined');
 }
 
-class Hson {
-  constructor () {
-    this.is_node = is_node();
-    this.instance = null;
-    this.memory = null;
-  }
 
-  instantiate (path_to_wasm = null) {
-    return new Promise((resolve, reject) => {
-      const env = {
-        memoryBase: 0,
-        tableBase: 0,
-        memory: new WebAssembly.Memory({
-          initial: 256
-        }),
-        table: new WebAssembly.Table({
-          initial: 0,
-          element: 'anyfunc'
-        }),
-        console: (ptr) => {
-          let str = this.copyCStr(ptr);
-          console.log(str);
-        }
-      };
-
-      if (this.is_node) {
-        const fs = require('fs');
-        const path = require('path');
-
-        const src_path = path.resolve(__dirname, 'lib', 'hson.wasm');
-        const source = fs.readFileSync(src_path);
-        const typedArray = new Uint8Array(source);
-
-        WebAssembly.instantiate(typedArray, { env }).then(result => {
-          this.instance = result.instance.exports;
-          this.instance.debug();
-          resolve();
-        }).catch(reject);
-      } else {
-        WebAssembly.instantiateStreaming(fetch(path_to_wasm), { env }).then(result => {
-          this.instance = result.instance.exports;
-          this.instance.debug();
-          resolve();
-        }).catch(reject);
-      }
-    });
+class HsonWasm {
+  constructor (instance) {
+    this.instance = instance;
+    this.instance.debug();
   }
 
   parse (data_str) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.parse(this.newString(data_str))));
-      if (result.status === 'ERR') console.error(result.reason);
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK' && result.data);
     } catch (e) {
-      console.error(e);
-      return false;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   stringify () {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.stringify()));
-      if (result.status === 'ERR') console.error(result.reason);
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK') ? result.data : null;
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
@@ -84,12 +43,11 @@ class Hson {
         const data = JSON.parse(result.data);
         return data.map((item) => item.id);
       } else {
-        console.error(result.reason);
-        return null;
+        throw new Error(result.reason);
       }
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
@@ -100,19 +58,17 @@ class Hson {
         const data = JSON.parse(result.data);
         return data.map((item) => item.id);
       } else {
-        console.error(result.reason);
-        return null;
+        throw new Error(result.reason);
       }
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   query (query_str) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.query(this.newString(query_str))));
-      if (result.status === 'ERR') console.error(result.reason);
       if (result.status === 'OK') {
         let l = result.data.length;
 
@@ -121,18 +77,17 @@ class Hson {
 
         return result.data;
       } else {
-        return null;
+        throw new Error(result.reason);
       }
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   query_on (node_id, query_str) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.query_on(node_id, this.newString(query_str))));
-      if (result.status === 'ERR') console.error(result.reason);
       if (result.status === 'OK') {
         let l = result.data.length;
 
@@ -141,59 +96,55 @@ class Hson {
 
         return result.data;
       } else {
-        return null;
+        throw new Error(result.reason);
       }
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   insert (node_id, position, data_str) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.insert(node_id, position, this.newString(data_str))));
-      if (result.status === 'ERR') console.error(result.reason);
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK' && result.data);
     } catch (e) {
-      console.error(e);
-      return false;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   remove (node_id) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.remove(node_id)));
-      if (result.status === 'ERR') console.error(result.reason);
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK' && result.data);
     } catch (e) {
-      console.error(e);
-      return false;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   replace (node_id, data_str) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.replace(node_id, this.newString(data_str))));
-      if (result.status === 'ERR') console.error(result.reason);
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK' && result.data);
     } catch (e) {
-      console.error(e);
-      return false;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
   is_child (parent_id, child_id) {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.is_child(parent_id, child_id)));
-      if (result.status === 'ERR') {
-        console.error(result.reason);
-        return null;
-      }
-
+      if (result.status === 'ERR') throw new Error(result.reason);
       return (result.status === 'OK' && result.data);
     } catch (e) {
-      console.error(e);
-      return null;
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
@@ -201,9 +152,10 @@ class Hson {
     try {
       const result = JSON.parse(this.copyCStr(this.instance.get_formatted_data()));
       if (result.status === 'OK') console.log(result.data);
-      else console.error(result.reason);
+      else throw new Error(result.reason);
     } catch (e) {
-      console.error(e);
+      if (e instanceof Error) throw e;
+      else throw new Error(e);
     }
   }
 
@@ -273,6 +225,63 @@ class Hson {
   }
 }
 
+class HsonWasmFactory {
+  constructor () {
+    this.is_node = is_node();
+    this.module = null;
+    this.env = {
+      memoryBase: 0,
+      tableBase: 0,
+      memory: new WebAssembly.Memory({
+        initial: 256
+      }),
+      table: new WebAssembly.Table({
+        initial: 0,
+        element: 'anyfunc'
+      }),
+      console: (ptr) => {
+        let str = this.copyCStr(ptr);
+        console.log(str);
+      }
+    };
+  }
+
+  instantiate (path_to_wasm = null) {
+    return new Promise((resolve, reject) => {
+      if (this.is_node) {
+        const fs = require('fs');
+        const path = require('path');
+
+        try {
+          const src_path = path.resolve(__dirname, 'lib', 'hson.wasm');
+          const source = fs.readFileSync(src_path);
+          this.module = new Uint8Array(source);
+          resolve();
+        } catch (err) {
+          reject(err);
+        }
+      } else {
+        WebAssembly.instantiateStreaming(fetch(path_to_wasm), { env: this.env }).then(result => {
+          this.module = result.module;
+          resolve();
+        }).catch(reject);
+      }
+    });
+  }
+
+  new () {
+    return new Promise((resolve, reject) => {
+      WebAssembly.instantiate(this.module, { env: this.env }).then(result => {
+        const instance = (result.exports) ? result.exports : result.instance.exports;
+        const hson = new HsonWasm(instance);
+        resolve(hson);
+      }).catch(reject);
+    });
+  }
+}
+
+
+const Hson = new HsonWasmFactory();
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = Hson;
 }
